@@ -504,23 +504,29 @@ function checkLoginStatus() {
   <!-- ⭐ 推荐：JS 放在 body 最后 -->
   <script src="script.js"></script>
 
-<script> 
-    document.addEventListener("click", function (e) {
+<script>
+document.addEventListener("click", function (e) {
 
-  // 只处理 header 里的二维码
-  if (e.target.classList.contains("qrcode")) {
+  const qr = e.target.closest(".qrcode");
+
+  // 点击 Header 二维码
+  if (qr) {
+    e.stopPropagation();  // 防止被其他监听器拦截
+
     const overlay = document.getElementById("overlay");
     const overlayImg = document.getElementById("overlay-img");
 
     overlay.style.display = "flex";
-    overlayImg.src = e.target.src;
+    overlayImg.src = qr.src;
+    return;
   }
 
-});
+  // 点击遮罩关闭
+  if (e.target.id === "overlay") {
+    e.target.style.display = "none";
+  }
 
-document.getElementById("overlay").onclick = function () {
-  this.style.display = "none";
-};
-  </script>    
+}, true);  // ⭐ 使用捕获阶段监听
+</script>
 </body>
 </html>
