@@ -512,21 +512,20 @@ function checkLoginStatus() {
   <script src="script.js"></script>
 
 <script>
+
 document.addEventListener("click", function (e) {
 
-  const qr = e.target.closest(".qrcode");
+  const img = e.target.closest(".qrcode");
 
-  // 点击 Header 二维码
-  if (qr) {
-    e.stopPropagation();  // 防止被其他监听器拦截
-
+  if (img) {
     const overlay = document.getElementById("overlay");
     const overlayImg = document.getElementById("overlay-img");
 
     overlay.style.display = "flex";
-    overlayImg.src = qr.src;
-    return;
+    overlayImg.src = img.src;
   }
+
+});
 
   // 点击遮罩关闭
   if (e.target.id === "overlay") {
