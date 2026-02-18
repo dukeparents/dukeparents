@@ -507,6 +507,24 @@ function checkLoginStatus() {
 
   <!-- ⭐ 推荐：JS 放在 body 最后 -->
   <script src="script.js"></script>
+
+    document.addEventListener("click", function (e) {
+
+  // 只处理 header 里的二维码
+  if (e.target.classList.contains("qrcode")) {
+    const overlay = document.getElementById("overlay");
+    const overlayImg = document.getElementById("overlay-img");
+
+    overlay.style.display = "flex";
+    overlayImg.src = e.target.src;
+  }
+
+});
+
+// 点击遮罩关闭
+document.getElementById("overlay").onclick = function () {
+  this.style.display = "none";
+};
       
 </body>
 </html>
