@@ -435,35 +435,47 @@ Fraternities and sororities对pre-med track 学生没有作用。
     }
   };
 
-  function showContent() {
-    const template = document.getElementById("real-content");
-    const clone = template.content.cloneNode(true);
-    const main = document.getElementById("protected-area");
-    main.innerHTML = "";
+function showContent() {
+  const template = document.getElementById("real-content");
+  const clone = template.content.cloneNode(true);
+  const main = document.getElementById("protected-area");
+  main.innerHTML = "";
 
-// 创建顶部工具栏
-  const topBar = document.createElement("div");
-  topBar.style.textAlign = "right";
-  topBar.style.padding = "10px 20px";
+  main.appendChild(clone);
 
+  // 删除旧按钮（避免重复）
+  const oldBtn = document.getElementById("logoutBtnFixed");
+  if (oldBtn) oldBtn.remove();
+
+  // 创建固定按钮
   const logoutBtn = document.createElement("button");
-  logoutBtn.textContent = "退出登录";
-  logoutBtn.style.padding = "6px 12px";
+  logoutBtn.id = "logoutBtnFixed";
+  logoutBtn.innerText = "退出登录";
+
+  logoutBtn.style.position = "fixed";
+  logoutBtn.style.top = "20px";
+  logoutBtn.style.right = "20px";
+  logoutBtn.style.zIndex = "99999";
+  logoutBtn.style.padding = "8px 14px";
+  logoutBtn.style.background = "#003366";
+  logoutBtn.style.color = "white";
+  logoutBtn.style.border = "none";
+  logoutBtn.style.borderRadius = "6px";
   logoutBtn.style.cursor = "pointer";
 
-  logoutBtn.addEventListener("click", function () {
+  logoutBtn.onclick = function () {
     localStorage.removeItem("siteAuth");
-    location.reload();   // 重新加载回到登录页
-  });
+    alert("已退出登录");
+    location.reload();
+  };
 
-  topBar.appendChild(logoutBtn);
-  main.appendChild(topBar);
+  document.body.appendChild(logoutBtn);
+}
 
-  // 加载真实内容
 
-      
-    main.appendChild(clone);
-  }
+
+    
+  
 
 function checkLoginStatus() {
     const data = localStorage.getItem("siteAuth");
