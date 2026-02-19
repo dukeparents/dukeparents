@@ -592,16 +592,14 @@ function closeOverlay() {
 }
 
 // Close image overlay when clicking background
-document.getElementById("overlay").addEventListener("click", function(e) {
-  if (e.target === this) closeOverlay();
-});
-
-// Close video overlay when clicking background
-document.getElementById("video-overlay").addEventListener("click", function() {
-  var overlayVideo = document.getElementById("overlay-video");
-  overlayVideo.pause();
-  overlayVideo.src = "";
-  document.getElementById("video-overlay").style.display = "none";
+// video-overlay is inside <template> so we use event delegation instead
+document.addEventListener("click", function(e) {
+  if (e.target && e.target.id === "overlay") closeOverlay();
+  if (e.target && e.target.id === "video-overlay") {
+    var overlayVideo = document.getElementById("overlay-video");
+    if (overlayVideo) { overlayVideo.pause(); overlayVideo.src = ""; }
+    e.target.style.display = "none";
+  }
 });
 
 // Close on Escape
