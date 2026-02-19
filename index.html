@@ -13,6 +13,11 @@
   <img id="overlay-img" alt="放大图片">
 </div>
 
+<!-- Video overlay -->
+<div id="video-overlay" role="dialog" aria-modal="true" aria-label="视频放大">
+  <video id="overlay-video" controls></video>
+</div>
+
 <header>
     <h3>欢迎来到扯谈Duke群网站</h3>
     <div class="qrcode-wrapper">
@@ -55,13 +60,7 @@
       </video>
     </div>
 
-    <!-- 透明点击层 -->
-    <div class="video-click-layer"></div>
 
-    <!-- 视频放大遮罩 -->
-    <div id="video-overlay" role="dialog" aria-modal="true" aria-label="视频放大">
-      <video id="overlay-video" controls></video>
-    </div>
 
     <!-- 🔍 搜索框 -->
     <div class="search-bar">
@@ -457,14 +456,14 @@ Fraternities and sororities对pre-med track 学生没有作用。
     });
 
     // === 视频放大 ===
+    // video-overlay is outside template in main body, so getElementById works fine
     main.querySelectorAll(".video-wrapper").forEach(function(wrapper) {
       const video = wrapper.querySelector(".video-box");
-      const clickLayer = wrapper.querySelector(".video-click-layer");
-      const videoOverlay = document.getElementById("video-overlay");
-      const overlayVideo = document.getElementById("overlay-video");
-      if (clickLayer && video && videoOverlay && overlayVideo) {
-        clickLayer.addEventListener("click", function() {
-          overlayVideo.src = video.currentSrc || video.src;
+      if (video) {
+        video.addEventListener("click", function() {
+          var videoOverlay = document.getElementById("video-overlay");
+          var overlayVideo = document.getElementById("overlay-video");
+          overlayVideo.src = video.currentSrc || video.querySelector("source").src;
           videoOverlay.style.display = "flex";
           overlayVideo.play();
         });
@@ -591,15 +590,17 @@ function closeOverlay() {
   overlay.style.display = "none";
 }
 
-// Close image overlay when clicking background
-// video-overlay is inside <template> so we use event delegation instead
-document.addEventListener("click", function(e) {
-  if (e.target && e.target.id === "overlay") closeOverlay();
-  if (e.target && e.target.id === "video-overlay") {
-    var overlayVideo = document.getElementById("overlay-video");
-    if (overlayVideo) { overlayVideo.pause(); overlayVideo.src = ""; }
-    e.target.style.display = "none";
-  }
+// Close image overlay
+document.getElementById("overlay").addEventListener("click", function(e) {
+  if (e.target === this) closeOverlay();
+});
+
+// Close video overlay
+document.getElementById("video-overlay").addEventListener("click", function() {
+  var overlayVideo = document.getElementById("overlay-video");
+  overlayVideo.pause();
+  overlayVideo.src = "";
+  this.style.display = "none";
 });
 
 // Close on Escape
@@ -658,7 +659,66 @@ document.addEventListener("keydown", function(e) {
   }
 </style>
 
-<script src="script.js"></script>
+<script>
+// ===== CSV 函数 =====
+function renderCSV(csvText, tableId) {
+  var rows = csvText.trim().split("\n");
+  var table = document.getElementById(tableId);
+  table.innerHTML = "";
+  rows.forEach(function(row, i) {
+    var tr = document.createElement("tr");
+    row.split(",").forEach(function(cell) {
+      var el = document.createElement(i === 0 ? "th" : "td");
+      el.textContent = cell;
+      tr.appendChild(el);
+    });
+    table.appendChild(tr);
+  });
+}
+
+function loadCSV30() {
+  var pwd = document.getElementById("csvPwd30").value;
+  var err = document.getElementById("csvErr30");
+  if (pwd !== "2030Duke") { err.textContent = "❌ 密码错误"; return; }
+  fetch("class30.csv").then(function(r){ return r.text(); })
+    .then(function(t){ renderCSV(t, "csvTable30"); })
+    .catch(function(){ err.textContent = "❌ CSV 文件加载失败"; });
+  err.textContent = "";
+  document.getElementById("csv-password-box-30").style.display = "none";
+  document.getElementById("csv-container-30").style.display = "block";
+}
+
+function loadCSV24() {
+  var pwd = document.getElementById("csvPwd24").value;
+  var err = document.getElementById("csvErr24");
+  if (pwd !== "Duke2024") { err.textContent = "❌ 密码错误"; return; }
+  fetch("24graduate.csv").then(function(r){ return r.text(); })
+    .then(function(t){ renderCSV(t, "csvTable24"); })
+    .catch(function(){ err.textContent = "❌ CSV 文件加载失败"; });
+  err.textContent = "";
+  document.getElementById("csv-password-box-24").style.display = "none";
+  document.getElementById("csv-container-24").style.display = "block";
+}
+
+function loadCSV25() {
+  var pwd = document.getElementById("csvPwd25").value;
+  var err = document.getElementById("csvErr25");
+  if (pwd !== "Duke2025") { err.textContent = "❌ 密码错误"; return; }
+  fetch("25graduate.csv").then(function(r){ return r.text(); })
+    .then(function(t){ renderCSV(t, "csvTable25"); })
+    .catch(function(){ err.textContent = "❌ CSV 文件加载失败"; });
+  err.textContent = "";
+  document.getElementById("csv-password-box-25").style.display = "none";
+  document.getElementById("csv-container-25").style.display = "block";
+}
+
+function closeCSV(year) {
+  var c = document.getElementById("csv-container-" + year);
+  if (c) c.style.display = "none";
+  var p = document.getElementById("csv-password-box-" + year);
+  if (p) p.style.display = "block";
+}
+</script>
 
 </body>
 </html>
