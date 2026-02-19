@@ -389,146 +389,44 @@ Fraternities and sororities对pre-med track 学生没有作用。
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 <script>
-(function () {
 
-  // ⚠️ NOTE: For production, move authentication to a server-side solution.
-  // Client-side passwords are visible in DevTools. Consider a backend API or
-  // services like Netlify Identity, Firebase Auth, or a password-protected server route.
-  const PASSWORD = "123456"; // Change to your password
-  const EXPIRE_TIME = 2 * 60 * 60 * 1000; // 2 hours
-
-  function showLogin() {
-    document.getElementById("protected-area").innerHTML = `
-      <div style="text-align:center;margin-top:120px;">
-        <h2>扯谈Duke群体系家长专用</h2>
-        <h4>请输入访问密码</h4>
-        <input type="password" id="sitePwd" aria-label="访问密码">
-        <button onclick="checkSitePwd()" type="button">进入</button>
-        <p id="siteErr" style="color:red;" role="alert"></p>
-      </div>
-    `;
-
-    // ✅ FIX: Support Enter key on login
-    setTimeout(() => {
-      const input = document.getElementById("sitePwd");
-      if (input) {
-        input.addEventListener("keydown", function (e) {
-          if (e.key === "Enter") checkSitePwd();
-        });
-      }
-    }, 0);
-  }
-
-  window.checkSitePwd = function () {
-    const input = document.getElementById("sitePwd").value;
-    if (input === PASSWORD) {
-      const loginData = { time: Date.now() };
-      localStorage.setItem("siteAuth", JSON.stringify(loginData));
-      showContent();
-    } else {
-      document.getElementById("siteErr").innerText = "密码错误";
-    }
-  };
-
-  function showContent() {
-    const template = document.getElementById("real-content");
-    const clone = template.content.cloneNode(true);
-    const main = document.getElementById("protected-area");
-    main.innerHTML = "";
-    main.appendChild(clone);
-
-    // Remove any existing logout button
-    const oldBtn = document.getElementById("logoutBtnFixed");
-    if (oldBtn) oldBtn.remove();
-
-    // ✅ FIX: Logout button styles moved here but kept readable
-    const logoutBtn = document.createElement("button");
-    logoutBtn.id = "logoutBtnFixed";
-    logoutBtn.innerText = "退出登录";
-    logoutBtn.setAttribute("aria-label", "退出登录");
-    logoutBtn.className = "logout-btn-fixed"; // Use CSS class instead of inline styles
-    logoutBtn.onclick = function () {
-      localStorage.removeItem("siteAuth");
-      alert("已退出登录");
-      location.reload();
-    };
-    document.body.appendChild(logoutBtn);
-
-    // ✅ FIX: Search with "no results" feedback
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-      searchInput.addEventListener("input", function () {
-        const query = this.value.trim().toLowerCase();
-        const items = document.querySelectorAll(".link-list li:not(.section-title)");
-        const noResults = document.getElementById("searchNoResults");
-        let anyVisible = false;
-
-        items.forEach(function (li) {
-          const text = li.textContent.toLowerCase();
-          const match = !query || text.includes(query);
-          li.style.display = match ? "" : "none";
-          if (match) anyVisible = true;
-        });
-
-        if (noResults) {
-          noResults.style.display = (query && !anyVisible) ? "block" : "none";
-        }
-      });
-    }
-  }
-
-  function checkLoginStatus() {
-    const data = localStorage.getItem("siteAuth");
-    if (!data) { showLogin(); return; }
-
-    try {
-      const loginData = JSON.parse(data);
-      const now = Date.now();
-      if (now - loginData.time > EXPIRE_TIME) {
-        localStorage.removeItem("siteAuth");
-        showLogin();
-      } else {
-        showContent();
-      }
-    } catch (e) {
-      localStorage.removeItem("siteAuth");
-      showLogin();
-    }
-  }
-
-  checkLoginStatus();
-
-})();
-</script>
-
-<!-- ✅ FIX: Unified, correct image overlay event listener -->
 <script>
-document.addEventListener("click", function (e) {
-  // Open overlay when clicking a qrcode thumbnail
-  const img = e.target.closest(".qrcode");
-  if (img) {
-    const overlay = document.getElementById("overlay");
-    const overlayImg = document.getElementById("overlay-img");
-    overlay.style.display = "flex";
-    overlayImg.src = img.src;
-    overlayImg.alt = img.alt;
-    return;
-  }
+const correctPassword = "duke2025"; // 改成你的密码
+const protectedArea = document.getElementById("protected-area");
+const template = document.getElementById("real-content");
+const overlay = document.getElementById("overlay");
 
-  // ✅ FIX: Close overlay when clicking the overlay background (was broken before)
-  if (e.target.id === "overlay") {
-    e.target.style.display = "none";
-  }
-});
+function loadContent() {
+  const clone = template.content.cloneNode(true);
+  protectedArea.innerHTML = "";
+  protectedArea.appendChild(clone);
+}
 
-// Also close overlay on Escape key for accessibility
-document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape") {
-    const overlay = document.getElementById("overlay");
-    if (overlay) overlay.style.display = "none";
+function checkPassword() {
+  const input = document.getElementById("password-input").value;
+
+  if (input === correctPassword) {
+    loadContent();
+    overlay.style.display = "none";
+    overlay.style.pointerEvents = "none";
+  } else {
+    alert("密码错误");
   }
+}
+
+function logout() {
+  protectedArea.innerHTML = "";
+  overlay.style.display = "flex";
+  overlay.style.pointerEvents = "auto";
+  document.getElementById("password-input").value = "";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  overlay.style.display = "flex";
+  overlay.style.pointerEvents = "auto";
 });
 </script>
+
 
 <!-- Add this to your style.css — logout button class -->
 <style>
