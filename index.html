@@ -8,6 +8,14 @@
 </head>
 <body>
 
+    <div id="overlay">
+  <div class="login-box">
+    <h2>请输入密码</h2>
+    <input type="password" id="password-input" placeholder="Password">
+    <button onclick="checkPassword()">进入</button>
+  </div>
+</div>
+
 <!-- Image overlay -->
 <div id="overlay" role="dialog" aria-modal="true" aria-label="图片放大查看">
   <img id="overlay-img" alt="放大图片">
@@ -387,8 +395,6 @@ Fraternities and sororities对pre-med track 学生没有作用。
 
 <!-- 访问统计 -->
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<script>
 
 <script>
 const correctPassword = "duke2025"; // 改成你的密码
