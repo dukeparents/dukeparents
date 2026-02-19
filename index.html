@@ -34,19 +34,60 @@
 <template id="real-content">
   <div>
 
-    <img src="231104S.png" class="thumb" alt="活动照片">
-    <img src="231104P.png" class="thumb" alt="活动照片">
-    <img src="110423F.jpg" class="thumb" alt="活动照片">
-    <img src="240511.png" class="thumb" alt="活动照片">
-    <img src="聚会.png" class="thumb" alt="聚会照片">
-    <img src="SH30.png" class="thumb" alt="上海30届">
-    <img src="聚会4.png" class="thumb" alt="聚会照片">
-    <img src="BJ30.png" class="thumb" alt="北京30届">
-    <img src="BJ29.png" class="thumb" alt="北京29届">
-    <img src="GD29.png" class="thumb" alt="广东29届">
-    <img src="agenda.png" class="thumb" alt="议程">
-    <img src="30_1.png" class="thumb" alt="30届照片1">
-    <img src="30_2.png" class="thumb" alt="30届照片2">
+    <!-- ===== 照片轮播相册 ===== -->
+    <div class="slideshow-container">
+      <div class="slideshow-track" id="slideshowTrack">
+        <div class="slide active">
+          <img src="231104S.png" alt="活动照片" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="231104P.png" alt="活动照片" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="110423F.jpg" alt="活动照片" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="240511.png" alt="活动照片" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="聚会.png" alt="聚会照片" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="SH30.png" alt="上海30届" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="聚会4.png" alt="聚会照片" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="BJ30.png" alt="北京30届" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="BJ29.png" alt="北京29届" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="GD29.png" alt="广东29届" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="agenda.png" alt="议程" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="30_1.png" alt="30届照片1" onclick="openOverlay(this.src, this.alt)">
+        </div>
+        <div class="slide">
+          <img src="30_2.png" alt="30届照片2" onclick="openOverlay(this.src, this.alt)">
+        </div>
+      </div>
+
+      <!-- 左右箭头 -->
+      <button class="slide-btn slide-prev" onclick="moveSlide(-1)">&#10094;</button>
+      <button class="slide-btn slide-next" onclick="moveSlide(1)">&#10095;</button>
+
+      <!-- 圆点指示器 -->
+      <div class="slide-dots" id="slideDots"></div>
+
+      <!-- 计数器 -->
+      <div class="slide-counter" id="slideCounter">1 / 13</div>
+    </div>
 
     <div class="video-wrapper">
       <video class="video-box" controls aria-label="2030届视频">
@@ -455,6 +496,63 @@ Fraternities and sororities对pre-med track 学生没有作用。
       img.onclick = function() { openOverlay(img.src, img.alt); };
     });
 
+    // === 轮播相册初始化 ===
+    (function() {
+      var slides = main.querySelectorAll(".slide");
+      var dotsContainer = main.querySelector("#slideDots");
+      var counter = main.querySelector("#slideCounter");
+      var current = 0;
+      var total = slides.length;
+      var autoTimer = null;
+
+      if (!slides.length) return;
+
+      // 创建圆点
+      slides.forEach(function(_, i) {
+        var dot = document.createElement("span");
+        dot.className = "slide-dot" + (i === 0 ? " active" : "");
+        dot.onclick = function() { goTo(i); resetAuto(); };
+        dotsContainer.appendChild(dot);
+      });
+
+      function goTo(n) {
+        slides[current].classList.remove("active");
+        dotsContainer.children[current].classList.remove("active");
+        current = (n + total) % total;
+        slides[current].classList.add("active");
+        dotsContainer.children[current].classList.add("active");
+        counter.textContent = (current + 1) + " / " + total;
+      }
+
+      // 暴露给按钮 onclick
+      main.querySelector(".slide-prev").onclick = function() { goTo(current - 1); resetAuto(); };
+      main.querySelector(".slide-next").onclick = function() { goTo(current + 1); resetAuto(); };
+
+      // 自动播放（4秒切换）
+      function startAuto() {
+        autoTimer = setInterval(function() { goTo(current + 1); }, 4000);
+      }
+      function resetAuto() {
+        clearInterval(autoTimer);
+        startAuto();
+      }
+      startAuto();
+
+      // 触摸滑动支持（手机）
+      var touchStartX = 0;
+      var track = main.querySelector(".slideshow-container");
+      track.addEventListener("touchstart", function(e) {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      track.addEventListener("touchend", function(e) {
+        var diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          goTo(diff > 0 ? current + 1 : current - 1);
+          resetAuto();
+        }
+      }, { passive: true });
+    })();
+
     // === 视频放大 ===
     // video-overlay is outside template in main body, so getElementById works fine
     main.querySelectorAll(".video-wrapper").forEach(function(wrapper) {
@@ -656,6 +754,95 @@ document.addEventListener("keydown", function(e) {
   /* Make all thumb images show pointer cursor so users know they're clickable */
   img.thumb {
     cursor: zoom-in;
+  }
+
+  /* ===== 轮播相册 ===== */
+  .slideshow-container {
+    position: relative;
+    max-width: 700px;
+    margin: 20px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    user-select: none;
+  }
+
+  .slide {
+    display: none;
+    text-align: center;
+  }
+
+  .slide.active {
+    display: block;
+    animation: fadeSlide 0.5s ease;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .slide img {
+    width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    cursor: zoom-in;
+    display: block;
+    margin: 0 auto;
+    background: #000;
+  }
+
+  /* 左右箭头按钮 */
+  .slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    border: none;
+    padding: 12px 16px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    z-index: 10;
+    transition: background 0.2s;
+  }
+  .slide-btn:hover { background: rgba(0,0,0,0.75); }
+  .slide-prev { left: 8px; }
+  .slide-next { right: 8px; }
+
+  /* 圆点指示器 */
+  .slide-dots {
+    text-align: center;
+    padding: 10px 0 6px;
+    background: #000;
+  }
+  .slide-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin: 0 4px;
+    background: #666;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .slide-dot.active { background: #fff; }
+
+  /* 计数器 */
+  .slide-counter {
+    text-align: center;
+    color: #aaa;
+    font-size: 12px;
+    padding-bottom: 8px;
+    background: #000;
+  }
+
+  /* 手机适配 */
+  @media (max-width: 600px) {
+    .slide img { max-height: 280px; }
+    .slide-btn { padding: 8px 12px; font-size: 16px; }
   }
 </style>
 
