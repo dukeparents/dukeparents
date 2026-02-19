@@ -16,7 +16,7 @@
 <header>
     <h3>欢迎来到扯谈Duke群网站</h3>
     <div class="qrcode-wrapper">
-        <img src="QRcode.png" class="thumb qrcode" alt="入群请求扫描二维码">
+        <img src="QRcode.png" class="thumb qrcode" alt="入群请求扫描二维码" onclick="openOverlay(this.src, this.alt)">
     </div>
     <h4>💥祝贺2030届新家长！</h4>
     <h4>新生和历届家长请扫描二维码申请进入家长群</h4>
@@ -438,53 +438,112 @@ Fraternities and sororities对pre-med track 学生没有作用。
     main.innerHTML = "";
     main.appendChild(clone);
 
-    // Remove any existing logout button
+    // === 退出登录按钮 ===
     const oldBtn = document.getElementById("logoutBtnFixed");
     if (oldBtn) oldBtn.remove();
-
-    // ✅ FIX: Logout button styles moved here but kept readable
     const logoutBtn = document.createElement("button");
     logoutBtn.id = "logoutBtnFixed";
     logoutBtn.innerText = "退出登录";
-    logoutBtn.setAttribute("aria-label", "退出登录");
-    logoutBtn.className = "logout-btn-fixed"; // Use CSS class instead of inline styles
+    logoutBtn.className = "logout-btn-fixed";
     logoutBtn.onclick = function () {
       localStorage.removeItem("siteAuth");
-      alert("已退出登录");
       location.reload();
     };
     document.body.appendChild(logoutBtn);
 
-    // ✅ FIX: PPT toggle — querySelector on main, no setTimeout needed
+    // === 图片放大 ===
+    main.querySelectorAll("img.thumb").forEach(function(img) {
+      img.onclick = function() { openOverlay(img.src, img.alt); };
+    });
+
+    // === 视频放大 ===
+    main.querySelectorAll(".video-wrapper").forEach(function(wrapper) {
+      const video = wrapper.querySelector(".video-box");
+      const clickLayer = wrapper.querySelector(".video-click-layer");
+      const videoOverlay = document.getElementById("video-overlay");
+      const overlayVideo = document.getElementById("overlay-video");
+      if (clickLayer && video && videoOverlay && overlayVideo) {
+        clickLayer.addEventListener("click", function() {
+          overlayVideo.src = video.currentSrc || video.src;
+          videoOverlay.style.display = "flex";
+          overlayVideo.play();
+        });
+      }
+    });
+
+    // === PPT 展开/收起 ===
     const pptToggle = main.querySelector("#pptToggle");
     const pptContent = main.querySelector("#pptContent");
     if (pptToggle && pptContent) {
-      pptToggle.addEventListener("click", function () {
-        const isOpen = pptContent.style.display !== "none";
+      pptToggle.addEventListener("click", function() {
+        const isOpen = pptContent.style.display === "block";
         pptContent.style.display = isOpen ? "none" : "block";
         pptToggle.textContent = isOpen ? "展开" : "收起";
         pptToggle.setAttribute("aria-expanded", String(!isOpen));
       });
     }
 
-    // ✅ FIX: Search with "no results" feedback
+    // === 搜索 ===
     const searchInput = main.querySelector("#searchInput");
     if (searchInput) {
-      searchInput.addEventListener("input", function () {
-        const query = this.value.trim().toLowerCase();
-        const items = main.querySelectorAll(".link-list li:not(.section-title)");
-        const noResults = main.querySelector("#searchNoResults");
-        let anyVisible = false;
-
-        items.forEach(function (li) {
-          const text = li.textContent.toLowerCase();
-          const match = !query || text.includes(query);
-          li.style.display = match ? "" : "none";
-          if (match) anyVisible = true;
+      searchInput.addEventListener("input", function() {
+        const keyword = this.value.trim().toLowerCase();
+        const items = main.querySelectorAll(".link-list a, .link-list li");
+        let firstMatch = null;
+        items.forEach(function(el) {
+          const text = el.textContent.toLowerCase();
+          const match = text.includes(keyword);
+          el.style.display = match ? "" : "none";
+          if (match && !firstMatch && keyword !== "") firstMatch = el;
         });
+        if (firstMatch) firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
 
-        if (noResults) {
-          noResults.style.display = (query && !anyVisible) ? "block" : "none";
+    // === Q&A 密码 ===
+    const qaPassword = "Duke2030";
+    const qaContent = main.querySelector(".qa-content");
+    const qaInput = main.querySelector("#qaPassword");
+    const qaSubmit = main.querySelector("#qaSubmit");
+    const qaClose = main.querySelector("#qaClose");
+    const qaShowPwd = main.querySelector("#qaShowPwd");
+
+    if (qaSubmit && qaInput && qaContent) {
+      qaSubmit.addEventListener("click", function() {
+        if (qaInput.value === qaPassword) {
+          qaContent.style.display = "block";
+          qaInput.style.display = "none";
+          qaSubmit.style.display = "none";
+          if (qaClose) qaClose.style.display = "inline-block";
+        } else {
+          alert("密码错误，请重试！");
+        }
+      });
+
+      // Enter键提交Q&A密码
+      qaInput.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") qaSubmit.click();
+      });
+    }
+
+    if (qaClose && qaContent && qaInput && qaSubmit) {
+      qaClose.addEventListener("click", function() {
+        qaContent.style.display = "none";
+        qaInput.style.display = "inline-block";
+        qaSubmit.style.display = "inline-block";
+        qaClose.style.display = "none";
+        qaInput.value = "";
+      });
+    }
+
+    if (qaShowPwd && qaInput) {
+      qaShowPwd.addEventListener("click", function() {
+        if (qaInput.type === "password") {
+          qaInput.type = "text";
+          qaShowPwd.textContent = "隐藏密码";
+        } else {
+          qaInput.type = "password";
+          qaShowPwd.textContent = "显示密码";
         }
       });
     }
@@ -514,31 +573,45 @@ Fraternities and sororities对pre-med track 学生没有作用。
 })();
 </script>
 
-<!-- ✅ FIX: Image overlay — handles ALL .thumb images including cloned template content -->
 <script>
-document.addEventListener("click", function (e) {
-  // Match any .thumb image (covers qrcode, photos, etc.)
-  const img = e.target.closest("img.thumb");
-  if (img) {
-    const overlay = document.getElementById("overlay");
-    const overlayImg = document.getElementById("overlay-img");
-    overlay.style.display = "flex";
-    overlayImg.src = img.src;
-    overlayImg.alt = img.alt || "放大图片";
-    return;
-  }
+// ===== IMAGE OVERLAY =====
+// style.css already has #overlay with display:none and flex layout
+// We just need to toggle display between "none" and "flex"
 
-  // Close overlay when clicking the background
-  if (e.target.id === "overlay") {
-    e.target.style.display = "none";
-  }
+function openOverlay(src, alt) {
+  var overlay = document.getElementById("overlay");
+  var overlayImg = document.getElementById("overlay-img");
+  overlayImg.src = src;
+  overlayImg.alt = alt || "放大图片";
+  overlay.style.display = "flex";
+}
+
+function closeOverlay() {
+  var overlay = document.getElementById("overlay");
+  overlay.style.display = "none";
+}
+
+// Close image overlay when clicking background
+document.getElementById("overlay").addEventListener("click", function(e) {
+  if (e.target === this) closeOverlay();
 });
 
-// Close overlay on Escape key
-document.addEventListener("keydown", function (e) {
+// Close video overlay when clicking background
+document.getElementById("video-overlay").addEventListener("click", function() {
+  var overlayVideo = document.getElementById("overlay-video");
+  overlayVideo.pause();
+  overlayVideo.src = "";
+  document.getElementById("video-overlay").style.display = "none";
+});
+
+// Close on Escape
+document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") {
-    const overlay = document.getElementById("overlay");
-    if (overlay) overlay.style.display = "none";
+    closeOverlay();
+    var overlayVideo = document.getElementById("overlay-video");
+    if (overlayVideo) { overlayVideo.pause(); overlayVideo.src = ""; }
+    var vo = document.getElementById("video-overlay");
+    if (vo) vo.style.display = "none";
   }
 });
 </script>
