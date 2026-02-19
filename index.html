@@ -543,11 +543,51 @@ document.addEventListener("keydown", function (e) {
 });
 </script>
 
-<!-- Add this to your style.css — logout button class -->
 <style>
+  /* Logout button */
   .logout-btn-fixed {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 99999;
-    
+    padding: 8px 14px;
+    background: #003366;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .logout-btn-fixed:hover {
+    background: #00509e;
+  }
+
+  /* Image overlay — self-contained, no CSS file dependency */
+  #overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 999999;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+  }
+  #overlay-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 6px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    pointer-events: none;
+  }
+
+  /* Make all thumb images show pointer cursor so users know they're clickable */
+  img.thumb {
+    cursor: zoom-in;
+  }
+</style>
+
+<script src="script.js"></script>
+
+</body>
+</html>
