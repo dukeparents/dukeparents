@@ -80,8 +80,9 @@
         <h3 id="pptHeading">📘 家长群介绍（PPT）</h3>
         <button id="pptToggle" aria-expanded="false" aria-controls="pptContent">展开</button>
       </div>
-      <div id="pptContent" class="ppt-content">
-        <iframe src="Parents_Guide.pdf" title="家长群介绍 PPT"></iframe>
+      <!-- 默认隐藏，点击展开后显示 -->
+      <div id="pptContent" class="ppt-content" style="display:none;">
+        <iframe src="Parents_Guide.pdf" title="家长群介绍 PPT" width="100%" height="600px"></iframe>
         <div class="ppt-actions">
           <a href="Parents_Guide.pdf" target="_blank">下载_PDF</a>
           <a href="Parents_Guide.pdf" target="_blank">全屏查看</a>
@@ -376,7 +377,7 @@ Fraternities and sororities对pre-med track 学生没有作用。
   <h5>Web administrator:</h5>
   <h5>2024届家长_WeChatID_2327293770</h5>
   <div class="footer-bottom">
-    <h5><a class="email-link" href="mailto:parentsduke@gmail.com">parentsduke@gmail.com</a></h5>
+    <h5><a class="email-link" href="/cdn-cgi/l/email-protection#4a3a2b382f243e392e3f212f0a2d272b232664292527"><span class="__cf_email__" data-cfemail="265647544348525542534d4366414b474f4a0845494b">[email&#160;protected]</span></a></h5>
     <span class="WJ-wrapper"><img src="WJ.png" class="thumb WJ" alt="管理员二维码"></span>
   </div>
   <div class="site-counter">
@@ -386,7 +387,7 @@ Fraternities and sororities对pre-med track 学生没有作用。
 </footer>
 
 <!-- 访问统计 -->
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 <script>
 (function () {
@@ -453,6 +454,20 @@ Fraternities and sororities对pre-med track 学生没有作用。
       location.reload();
     };
     document.body.appendChild(logoutBtn);
+
+    // ✅ FIX: PPT toggle button logic
+    setTimeout(() => {
+      const pptToggle = document.getElementById("pptToggle");
+      const pptContent = document.getElementById("pptContent");
+      if (pptToggle && pptContent) {
+        pptToggle.addEventListener("click", function () {
+          const isOpen = pptContent.style.display !== "none";
+          pptContent.style.display = isOpen ? "none" : "block";
+          pptToggle.textContent = isOpen ? "展开" : "收起";
+          pptToggle.setAttribute("aria-expanded", String(!isOpen));
+        });
+      }
+    }, 0);
 
     // ✅ FIX: Search with "no results" feedback
     const searchInput = document.getElementById("searchInput");
@@ -537,19 +552,4 @@ document.addEventListener("keydown", function (e) {
     top: 20px;
     right: 20px;
     z-index: 99999;
-    padding: 8px 14px;
-    background: #003366;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .logout-btn-fixed:hover {
-    background: #00509e;
-  }
-</style>
-
-<script src="script.js"></script>
-
-</body>
-</html>
+    
