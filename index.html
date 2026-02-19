@@ -455,27 +455,25 @@ Fraternities and sororities对pre-med track 学生没有作用。
     };
     document.body.appendChild(logoutBtn);
 
-    // ✅ FIX: PPT toggle button logic
-    setTimeout(() => {
-      const pptToggle = document.getElementById("pptToggle");
-      const pptContent = document.getElementById("pptContent");
-      if (pptToggle && pptContent) {
-        pptToggle.addEventListener("click", function () {
-          const isOpen = pptContent.style.display !== "none";
-          pptContent.style.display = isOpen ? "none" : "block";
-          pptToggle.textContent = isOpen ? "展开" : "收起";
-          pptToggle.setAttribute("aria-expanded", String(!isOpen));
-        });
-      }
-    }, 0);
+    // ✅ FIX: PPT toggle — querySelector on main, no setTimeout needed
+    const pptToggle = main.querySelector("#pptToggle");
+    const pptContent = main.querySelector("#pptContent");
+    if (pptToggle && pptContent) {
+      pptToggle.addEventListener("click", function () {
+        const isOpen = pptContent.style.display !== "none";
+        pptContent.style.display = isOpen ? "none" : "block";
+        pptToggle.textContent = isOpen ? "展开" : "收起";
+        pptToggle.setAttribute("aria-expanded", String(!isOpen));
+      });
+    }
 
     // ✅ FIX: Search with "no results" feedback
-    const searchInput = document.getElementById("searchInput");
+    const searchInput = main.querySelector("#searchInput");
     if (searchInput) {
       searchInput.addEventListener("input", function () {
         const query = this.value.trim().toLowerCase();
-        const items = document.querySelectorAll(".link-list li:not(.section-title)");
-        const noResults = document.getElementById("searchNoResults");
+        const items = main.querySelectorAll(".link-list li:not(.section-title)");
+        const noResults = main.querySelector("#searchNoResults");
         let anyVisible = false;
 
         items.forEach(function (li) {
