@@ -89,19 +89,25 @@
       <div class="slide-counter" id="slideCounter">1 / 13</div>
     </div>
 
-    <div class="video-wrapper">
-      <video class="video-box" controls aria-label="2030届视频">
-        <source src="2030.mp4" type="video/mp4">
-      </video>
+    <!-- ===== 视频集 ===== -->
+    <div class="video-gallery-container">
+      <div class="video-gallery-main">
+        <video id="mainVideo" class="video-gallery-player" controls>
+          <source src="2030.mp4" type="video/mp4">
+        </video>
+        <div class="video-gallery-title" id="videoTitle">🎬 2030届视频</div>
+      </div>
+      <div class="video-gallery-thumbs" id="videoThumbs">
+        <div class="video-thumb active" onclick="switchVideo(0, this)">
+          <div class="video-thumb-icon">▶</div>
+          <div class="video-thumb-label">2030届视频</div>
+        </div>
+        <div class="video-thumb" onclick="switchVideo(1, this)">
+          <div class="video-thumb-icon">▶</div>
+          <div class="video-thumb-label">Justin视频</div>
+        </div>
+      </div>
     </div>
-
-    <div class="video-wrapper">
-      <video class="video-box" controls aria-label="Justin视频">
-        <source src="Justin.mp4" type="video/mp4">
-      </video>
-    </div>
-
-
 
     <!-- 🔍 搜索框 -->
     <div class="search-bar">
@@ -553,20 +559,33 @@ Fraternities and sororities对pre-med track 学生没有作用。
       }, { passive: true });
     })();
 
-    // === 视频放大 ===
-    // video-overlay is outside template in main body, so getElementById works fine
-    main.querySelectorAll(".video-wrapper").forEach(function(wrapper) {
-      const video = wrapper.querySelector(".video-box");
-      if (video) {
-        video.addEventListener("click", function() {
-          var videoOverlay = document.getElementById("video-overlay");
-          var overlayVideo = document.getElementById("overlay-video");
-          overlayVideo.src = video.currentSrc || video.querySelector("source").src;
-          videoOverlay.style.display = "flex";
-          overlayVideo.play();
-        });
-      }
-    });
+    // === 视频集切换 ===
+    var videoList = [
+      { src: "2030.mp4",  label: "🎬 2030届视频" },
+      { src: "Justin.mp4", label: "🎬 Justin视频" }
+    ];
+
+    window.switchVideo = function(index, thumbEl) {
+      var mainVideo = main.querySelector("#mainVideo");
+      var titleEl   = main.querySelector("#videoTitle");
+      var thumbs    = main.querySelectorAll(".video-thumb");
+
+      if (!mainVideo) return;
+
+      // 停止当前视频
+      mainVideo.pause();
+
+      // 切换 source
+      mainVideo.querySelector("source").src = videoList[index].src;
+      mainVideo.load();
+
+      // 更新标题
+      if (titleEl) titleEl.textContent = videoList[index].label;
+
+      // 更新高亮
+      thumbs.forEach(function(t) { t.classList.remove("active"); });
+      if (thumbEl) thumbEl.classList.add("active");
+    };
 
     // === PPT 展开/收起 ===
     const pptToggle = main.querySelector("#pptToggle");
@@ -754,6 +773,82 @@ document.addEventListener("keydown", function(e) {
   /* Make all thumb images show pointer cursor so users know they're clickable */
   img.thumb {
     cursor: zoom-in;
+  }
+
+  /* ===== 视频集 ===== */
+  .video-gallery-container {
+    max-width: 700px;
+    margin: 20px auto;
+    background: #111;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .video-gallery-player {
+    width: 100%;
+    max-height: 400px;
+    display: block;
+    background: #000;
+  }
+
+  .video-gallery-title {
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 14px;
+    background: #1a1a1a;
+    letter-spacing: 0.05em;
+  }
+
+  .video-gallery-thumbs {
+    display: flex;
+    gap: 0;
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    flex-wrap: wrap;
+  }
+
+  .video-thumb {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px 10px;
+    cursor: pointer;
+    text-align: center;
+    border-right: 1px solid #333;
+    transition: background 0.2s;
+  }
+
+  .video-thumb:last-child { border-right: none; }
+
+  .video-thumb:hover { background: #2a2a2a; }
+
+  .video-thumb.active {
+    background: #003366;
+  }
+
+  .video-thumb-icon {
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .video-thumb.active .video-thumb-icon {
+    color: #7eb8f7;
+  }
+
+  .video-thumb-label {
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .video-thumb.active .video-thumb-label {
+    color: #fff;
+  }
+
+  @media (max-width: 600px) {
+    .video-gallery-player { max-height: 240px; }
+    .video-thumb { padding: 8px 6px; }
+    .video-thumb-label { font-size: 11px; }
   }
 
   /* ===== 轮播相册 ===== */
