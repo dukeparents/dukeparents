@@ -424,7 +424,7 @@
   const REDIRECT_AFTER_REGISTER = '/login.html'; // or '/dashboard.html'
   // ================================================================
 
-  const isConfigured = SUPABASE_URL !== 'https://dukeparents.supabase.co';
+  const isConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL';
   let client = null;
   if (isConfigured) {
     client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
