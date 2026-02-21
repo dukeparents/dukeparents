@@ -202,6 +202,31 @@
 
   input::placeholder { color: #bbb; }
 
+  .pwd-wrap {
+    position: relative;
+  }
+
+  .pwd-wrap input {
+    padding-right: 44px;
+  }
+
+  .pwd-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  .pwd-toggle:hover { color: var(--navy); }
+
   .row-forgot {
     display: flex;
     justify-content: flex-end;
@@ -371,7 +396,10 @@
       </div>
       <div class="field">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+        <div class="pwd-wrap">
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+          <button type="button" class="pwd-toggle" id="pwdToggle" aria-label="显示或隐藏密码">👁</button>
+        </div>
         <div class="row-forgot"><a href="forgot-password.html">Forgot password?</a></div>
       </div>
       <button type="submit" class="btn" id="loginBtn">
@@ -403,7 +431,7 @@
   //  7. Push login.html to your GitHub repo → GitHub Pages auto-deploys
   // ================================================================
 
-  const SUPABASE_URL      = 'https://ctfqokgnnljmkghtmpxm.supabase.co';       // https://xxxx.supabase.co
+  const SUPABASE_URL      = 'https://dukeparents.supabase.co';       // https://xxxx.supabase.co
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0ZnFva2dubmxqbWtnaHRtcHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODUxMzgsImV4cCI6MjA4NzI2MTEzOH0.-CKwENIu90Q04bb1MeGoE5H5MGe1S71y4_aRChbbaMY';  // eyJhbGci...
   const REDIRECT_AFTER_LOGIN = '/dukeparents/index.html';       // page to go to after login
 
@@ -434,6 +462,18 @@
     btn.disabled = on;
     btn.classList.toggle('loading', on);
   }
+
+  // 显示/隐藏密码
+  document.getElementById('pwdToggle').addEventListener('click', function() {
+    const input = document.getElementById('password');
+    if (input.type === 'password') {
+      input.type = 'text';
+      this.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      this.textContent = '👁';
+    }
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
