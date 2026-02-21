@@ -530,49 +530,26 @@ document.addEventListener("keydown", function(e) {
 <!-- 访问统计 -->
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function () {
 
-  // ⚠️ NOTE: For production, move authentication to a server-side solution.
-  // Client-side passwords are visible in DevTools. Consider a backend API or
-  // services like Netlify Identity, Firebase Auth, or a password-protected server route.
-  const PASSWORD = "123456"; // Change to your password
-  const EXPIRE_TIME = 2 * 60 * 60 * 1000; // 2 hours
+  const SUPABASE_URL      = 'https://dukeparents.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0ZnFva2dubmxqbWtnaHRtcHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODUxMzgsImV4cCI6MjA4NzI2MTEzOH0.-CKwENIu90Q04bb1MeGoE5H5MGe1S71y4_aRChbbaMY';
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   function showLogin() {
     document.getElementById("protected-area").innerHTML = `
-      <div style="text-align:center;margin-top:120px;">
+      <div style="text-align:center;margin-top:120px;padding:20px;">
         <h2>扯谈Duke群体系家长专用</h2>
-        <h4>请输入访问密码</h4>
-        <input type="password" id="sitePwd" aria-label="访问密码">
-        <button onclick="checkSitePwd()" type="button">进入</button>
-        <p id="siteErr" style="color:red;" role="alert"></p>
+        <h4 style="margin:16px 0 24px;color:#555;">请登录后查看内容</h4>
+        <a href="login.html" style="display:inline-block;padding:12px 32px;background:#003366;color:#fff;border-radius:8px;text-decoration:none;font-size:16px;margin-right:12px;">登录</a>
+        <a href="register.html" style="display:inline-block;padding:12px 32px;background:#c9a84c;color:#003366;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">注册</a>
       </div>
     `;
-
-    // ✅ FIX: Support Enter key on login
-    setTimeout(() => {
-      const input = document.getElementById("sitePwd");
-      if (input) {
-        input.addEventListener("keydown", function (e) {
-          if (e.key === "Enter") checkSitePwd();
-        });
-      }
-    }, 0);
   }
 
-  window.checkSitePwd = function () {
-    const input = document.getElementById("sitePwd").value;
-    if (input === PASSWORD) {
-      const loginData = { time: Date.now() };
-      localStorage.setItem("siteAuth", JSON.stringify(loginData));
-      showContent();
-    } else {
-      document.getElementById("siteErr").innerText = "密码错误";
-    }
-  };
-
-  function showContent() {
+  function showContent(user) {
     const template = document.getElementById("real-content");
     const clone = template.content.cloneNode(true);
     const main = document.getElementById("protected-area");
@@ -586,8 +563,8 @@ document.addEventListener("keydown", function(e) {
     logoutBtn.id = "logoutBtnFixed";
     logoutBtn.innerText = "退出登录";
     logoutBtn.className = "logout-btn-fixed";
-    logoutBtn.onclick = function () {
-      localStorage.removeItem("siteAuth");
+    logoutBtn.onclick = async function () {
+      await client.auth.signOut();
       location.reload();
     };
     document.body.appendChild(logoutBtn);
@@ -770,21 +747,11 @@ document.addEventListener("keydown", function(e) {
     }
   }
 
-  function checkLoginStatus() {
-    const data = localStorage.getItem("siteAuth");
-    if (!data) { showLogin(); return; }
-
-    try {
-      const loginData = JSON.parse(data);
-      const now = Date.now();
-      if (now - loginData.time > EXPIRE_TIME) {
-        localStorage.removeItem("siteAuth");
-        showLogin();
-      } else {
-        showContent();
-      }
-    } catch (e) {
-      localStorage.removeItem("siteAuth");
+  async function checkLoginStatus() {
+    const { data: { session } } = await client.auth.getSession();
+    if (session) {
+      showContent(session.user);
+    } else {
       showLogin();
     }
   }
