@@ -403,13 +403,13 @@
   //  7. Push login.html to your GitHub repo → GitHub Pages auto-deploys
   // ================================================================
 
-  const SUPABASE_URL      = 'YOUR_SUPABASE_URL';       // https://xxxx.supabase.co
-  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // eyJhbGci...
+  const SUPABASE_URL      = 'https://dukeparents.supabase.co';       // https://xxxx.supabase.co
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0ZnFva2dubmxqbWtnaHRtcHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODUxMzgsImV4cCI6MjA4NzI2MTEzOH0.-CKwENIu90Q04bb1MeGoE5H5MGe1S71y4_aRChbbaMY';  // eyJhbGci...
   const REDIRECT_AFTER_LOGIN = '/dashboard.html';       // page to go to after login
 
   // ================================================================
 
-  const isConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL';
+  const isConfigured = SUPABASE_URL !== 'https://dukeparents.supabase.co';
   let client = null;
   if (isConfigured) {
     client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
