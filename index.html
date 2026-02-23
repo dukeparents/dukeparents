@@ -422,6 +422,38 @@ document.addEventListener("keydown", function(e) {
       </button>
       <div class="accordion-body accordion-body-qa">
 
+        <!-- PDF 内嵌区（永久显示，无需密码） -->
+        <div class="qa-pdf-embeds">
+
+          <div class="pdf-embed-block">
+            <div class="pdf-embed-title">📘 ECEhandbook-2526</div>
+            <iframe src="ECEhandbook-2526.pdf" class="pdf-iframe" title="ECE专业手册"></iframe>
+            <div class="pdf-embed-actions">
+              <a href="ECEhandbook-2526.pdf" target="_blank">🔗 新窗口打开</a>
+              <a href="ECEhandbook-2526.pdf" download>⬇️ 下载</a>
+            </div>
+          </div>
+
+          <div class="pdf-embed-block">
+            <div class="pdf-embed-title">📘 CEEHandbook-2526</div>
+            <iframe src="CEEHandbook-2526.pdf" class="pdf-iframe" title="CEE专业手册"></iframe>
+            <div class="pdf-embed-actions">
+              <a href="CEEHandbook-2526.pdf" target="_blank">🔗 新窗口打开</a>
+              <a href="CEEHandbook-2526.pdf" download>⬇️ 下载</a>
+            </div>
+          </div>
+
+          <div class="pdf-embed-block">
+            <div class="pdf-embed-title">📘 MEhandbook-2526</div>
+            <iframe src="MEhandbook-2526.pdf" class="pdf-iframe" title="ME专业手册"></iframe>
+            <div class="pdf-embed-actions">
+              <a href="MEhandbook-2526.pdf" target="_blank">🔗 新窗口打开</a>
+              <a href="MEhandbook-2526.pdf" download>⬇️ 下载</a>
+            </div>
+          </div>
+
+        </div>
+
         <!-- 密码保护区 -->
         <div class="qa-section">
           <input type="password" id="qaPassword" placeholder="请输入密码查看 Q&amp;A" aria-label="Q&A密码">
@@ -432,32 +464,6 @@ document.addEventListener("keydown", function(e) {
 
         <!-- Q&A 内容 -->
         <div class="qa-content" style="display:none;" role="region" aria-label="Q&A 家长询问和回答">
-
-          <!-- ===== PDF 智能问答 ===== -->
-          <div class="pdf-qa-section">
-            <div class="pdf-qa-title">📄 PDF 智能搜索问答</div>
-            <p class="pdf-qa-hint">上传任意 PDF 文件，然后输入问题，系统会从文件中找到相关内容。</p>
-
-            <div class="pdf-qa-upload-area" id="pdfDropZone">
-              <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;">
-              <div class="pdf-drop-icon">📂</div>
-              <div class="pdf-drop-text">点击选择 或 拖拽 PDF 文件到此处</div>
-              <button class="pdf-upload-btn" onclick="document.getElementById('pdfFileInput').click()">选择 PDF 文件</button>
-            </div>
-
-            <div id="pdfStatus" class="pdf-status" style="display:none;"></div>
-
-            <div id="pdfAskArea" class="pdf-ask-area" style="display:none;">
-              <div class="pdf-file-info" id="pdfFileInfo"></div>
-              <div class="pdf-input-row">
-                <input type="text" id="pdfQuestion" class="pdf-question-input" placeholder="请输入你的问题，例如：如何申请奖学金？" />
-                <button id="pdfAskBtn" class="pdf-ask-btn">搜索</button>
-              </div>
-              <div id="pdfAnswer" class="pdf-answer" style="display:none;"></div>
-              <button class="pdf-clear-btn" id="pdfClearBtn">🗑 清除文件，重新上传</button>
-            </div>
-          </div>
-
           <details class="qa-card">
             <summary>Q1: 扯谈Duke群是什么群?</summary>
             <p>Duke家长群。</p>
@@ -846,6 +852,49 @@ document.addEventListener("keydown", function(e) {
     cursor: zoom-in;
   }
 
+  /* Q&A PDF 内嵌区 */
+  .qa-pdf-embeds {
+    margin: 12px 0 20px;
+  }
+  .pdf-embed-block {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .pdf-embed-title {
+    background: #000080;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 16px;
+    letter-spacing: 0.05em;
+  }
+  .pdf-iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
+    display: block;
+    background: #fff;
+  }
+  .pdf-embed-actions {
+    background: #f4f4f4;
+    padding: 8px 16px;
+    display: flex;
+    gap: 20px;
+  }
+  .pdf-embed-actions a {
+    font-size: 14px;
+    color: #000080;
+    text-decoration: none;
+  }
+  .pdf-embed-actions a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 600px) {
+    .pdf-iframe { height: 380px; }
+  }
+
   /* Q&A 手风琴内容区 */
   .accordion-body-qa {
     padding: 0 16px 16px;
@@ -1169,137 +1218,6 @@ document.addEventListener("keydown", function(e) {
     .slide img { max-height: 280px; }
     .slide-btn { padding: 8px 12px; font-size: 16px; }
   }
-
-  /* ===== PDF 智能问答 ===== */
-  .pdf-qa-section {
-    margin: 20px 0 8px;
-    border: 1px solid #c5cae9;
-    border-radius: 10px;
-    padding: 18px 18px 14px;
-    background: #f5f7ff;
-  }
-  .pdf-qa-title {
-    font-size: 17px;
-    font-weight: bold;
-    color: #000080;
-    margin-bottom: 6px;
-  }
-  .pdf-qa-hint {
-    font-size: 13px;
-    color: #666;
-    margin: 0 0 14px;
-  }
-  .pdf-qa-upload-area {
-    border: 2px dashed #7986cb;
-    border-radius: 10px;
-    padding: 28px 20px;
-    text-align: center;
-    background: #fff;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .pdf-qa-upload-area.drag-over {
-    border-color: #000080;
-    background: #e8eaf6;
-  }
-  .pdf-drop-icon { font-size: 36px; margin-bottom: 8px; }
-  .pdf-drop-text { font-size: 14px; color: #555; margin-bottom: 12px; }
-  .pdf-upload-btn {
-    padding: 8px 22px;
-    background: #000080;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .pdf-upload-btn:hover { background: #00308F; }
-  .pdf-status {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #555;
-    text-align: center;
-  }
-  .pdf-status.loading::before { content: "⏳ "; }
-  .pdf-status.done::before { content: "✅ "; }
-  .pdf-status.error::before { content: "❌ "; color: crimson; }
-  .pdf-file-info {
-    font-size: 13px;
-    color: #3949ab;
-    background: #e8eaf6;
-    border-radius: 6px;
-    padding: 7px 12px;
-    margin-bottom: 12px;
-  }
-  .pdf-ask-area { margin-top: 14px; }
-  .pdf-input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-  .pdf-question-input {
-    flex: 1;
-    padding: 9px 12px;
-    border: 1px solid #9fa8da;
-    border-radius: 6px;
-    font-size: 14px;
-    outline: none;
-  }
-  .pdf-question-input:focus { border-color: #000080; }
-  .pdf-ask-btn {
-    padding: 9px 20px;
-    background: #000080;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-  .pdf-ask-btn:hover { background: #00308F; }
-  .pdf-ask-btn:disabled { background: #9fa8da; cursor: not-allowed; }
-  .pdf-answer {
-    background: #fff;
-    border: 1px solid #c5cae9;
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #333;
-    max-height: 360px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-  }
-  .pdf-answer .answer-match {
-    background: #fffde7;
-    border-left: 3px solid #f9a825;
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    border-radius: 0 6px 6px 0;
-  }
-  .pdf-answer .answer-match:last-child { margin-bottom: 0; }
-  .pdf-answer .match-page {
-    font-size: 11px;
-    color: #888;
-    margin-bottom: 4px;
-  }
-  .pdf-answer .match-text { color: #333; }
-  .pdf-answer .highlight { background: #fff176; font-weight: 600; border-radius: 2px; }
-  .pdf-answer .no-result { color: #888; text-align: center; padding: 20px 0; }
-  .pdf-clear-btn {
-    background: none;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 6px 14px;
-    font-size: 12px;
-    color: #888;
-    cursor: pointer;
-  }
-  .pdf-clear-btn:hover { border-color: #999; color: #555; }
-  @media (max-width: 600px) {
-    .pdf-input-row { flex-direction: column; }
-    .pdf-ask-btn { width: 100%; }
-  }
 </style>
 
 <script>
@@ -1359,216 +1277,6 @@ function closeCSV(year) {
   document.getElementById("csv-password-box-" + year).style.display = "block";
   document.getElementById("csvPwd" + year).value = "";
 }
-</script>
-
-<!-- PDF.js CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>
-(function() {
-
-  // pdf.js worker
-  if (window.pdfjsLib) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  }
-
-  var pdfPages = []; // [{page: n, text: "..."}]
-
-  function initPdfQA() {
-    var fileInput  = document.getElementById('pdfFileInput');
-    var dropZone   = document.getElementById('pdfDropZone');
-    var statusEl   = document.getElementById('pdfStatus');
-    var askArea    = document.getElementById('pdfAskArea');
-    var fileInfo   = document.getElementById('pdfFileInfo');
-    var questionEl = document.getElementById('pdfQuestion');
-    var askBtn     = document.getElementById('pdfAskBtn');
-    var answerEl   = document.getElementById('pdfAnswer');
-    var clearBtn   = document.getElementById('pdfClearBtn');
-
-    if (!fileInput) return;
-
-    // 拖拽支持
-    dropZone.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      dropZone.classList.add('drag-over');
-    });
-    dropZone.addEventListener('dragleave', function() {
-      dropZone.classList.remove('drag-over');
-    });
-    dropZone.addEventListener('drop', function(e) {
-      e.preventDefault();
-      dropZone.classList.remove('drag-over');
-      var file = e.dataTransfer.files[0];
-      if (file && file.type === 'application/pdf') loadPDF(file);
-      else showStatus('请上传 PDF 格式文件', 'error');
-    });
-
-    // 文件选择
-    fileInput.addEventListener('change', function() {
-      if (this.files[0]) loadPDF(this.files[0]);
-    });
-
-    // 搜索按钮
-    askBtn.addEventListener('click', doSearch);
-    questionEl.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') doSearch();
-    });
-
-    // 清除
-    clearBtn.addEventListener('click', function() {
-      pdfPages = [];
-      fileInput.value = '';
-      askArea.style.display = 'none';
-      dropZone.style.display = 'block';
-      statusEl.style.display = 'none';
-      answerEl.style.display = 'none';
-      questionEl.value = '';
-    });
-  }
-
-  function showStatus(msg, type) {
-    var el = document.getElementById('pdfStatus');
-    if (!el) return;
-    el.className = 'pdf-status ' + (type || '');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  async function loadPDF(file) {
-    if (!window.pdfjsLib) {
-      showStatus('PDF 解析库加载失败，请刷新页面重试', 'error');
-      return;
-    }
-    showStatus('正在解析 PDF，请稍候…', 'loading');
-    document.getElementById('pdfDropZone').style.display = 'none';
-
-    try {
-      var arrayBuffer = await file.arrayBuffer();
-      var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      pdfPages = [];
-
-      for (var i = 1; i <= pdf.numPages; i++) {
-        var page = await pdf.getPage(i);
-        var content = await page.getTextContent();
-        var text = content.items.map(function(item) { return item.str; }).join(' ');
-        if (text.trim()) pdfPages.push({ page: i, text: text });
-      }
-
-      showStatus('解析完成，共 ' + pdf.numPages + ' 页，已提取 ' + pdfPages.length + ' 页内容', 'done');
-
-      var fileInfo = document.getElementById('pdfFileInfo');
-      fileInfo.textContent = '📄 ' + file.name + '（' + pdf.numPages + ' 页）';
-
-      document.getElementById('pdfAskArea').style.display = 'block';
-
-    } catch(err) {
-      document.getElementById('pdfDropZone').style.display = 'block';
-      showStatus('解析失败：' + err.message, 'error');
-    }
-  }
-
-  function doSearch() {
-    var questionEl = document.getElementById('pdfQuestion');
-    var answerEl   = document.getElementById('pdfAnswer');
-    var askBtn     = document.getElementById('pdfAskBtn');
-
-    var query = questionEl.value.trim();
-    if (!query) { questionEl.focus(); return; }
-    if (!pdfPages.length) { showStatus('请先上传 PDF 文件', 'error'); return; }
-
-    askBtn.disabled = true;
-    askBtn.textContent = '搜索中…';
-
-    // 分词：把问题拆成关键词（过滤掉1字以下的虚词）
-    var stopWords = new Set(['的','了','吗','吧','呢','是','在','有','和','与','或','但','而','也','都','不','很','这','那','哪','怎','什','么','如何','请问','请','我','你','他','她','它','们','啊','哦','嗯']);
-    var keywords = query.split(/[\s，。？！,?.!\u3000]+/).filter(function(w) {
-      return w.length >= 1 && !stopWords.has(w);
-    });
-    if (!keywords.length) keywords = [query];
-
-    // 对每页算相关度得分
-    var results = pdfPages.map(function(p) {
-      var lowerText = p.text.toLowerCase();
-      var score = 0;
-      keywords.forEach(function(kw) {
-        var lowerKw = kw.toLowerCase();
-        var count = 0;
-        var pos = lowerText.indexOf(lowerKw);
-        while (pos !== -1) { count++; pos = lowerText.indexOf(lowerKw, pos + 1); }
-        score += count * kw.length; // 较长关键词权重更高
-      });
-      return { page: p.page, text: p.text, score: score };
-    }).filter(function(r) { return r.score > 0; })
-      .sort(function(a, b) { return b.score - a.score; })
-      .slice(0, 4); // 最多显示4条
-
-    answerEl.style.display = 'block';
-
-    if (!results.length) {
-      answerEl.innerHTML = '<div class="no-result">😕 未在 PDF 中找到与"' + escHtml(query) + '"相关的内容，请尝试换个关键词。</div>';
-    } else {
-      var html = '<div style="font-size:12px;color:#888;margin-bottom:10px;">找到 ' + results.length + ' 处相关内容：</div>';
-      results.forEach(function(r) {
-        // 提取包含关键词的上下文片段（约200字）
-        var snippet = getSnippet(r.text, keywords, 200);
-        // 高亮关键词
-        var highlighted = highlightKeywords(escHtml(snippet), keywords);
-        html += '<div class="answer-match">'
-              + '<div class="match-page">第 ' + r.page + ' 页</div>'
-              + '<div class="match-text">' + highlighted + '</div>'
-              + '</div>';
-      });
-      answerEl.innerHTML = html;
-    }
-
-    askBtn.disabled = false;
-    askBtn.textContent = '搜索';
-  }
-
-  function getSnippet(text, keywords, maxLen) {
-    // 找到第一个关键词出现的位置，截取前后各100字
-    var lowerText = text.toLowerCase();
-    var firstPos = text.length;
-    keywords.forEach(function(kw) {
-      var pos = lowerText.indexOf(kw.toLowerCase());
-      if (pos !== -1 && pos < firstPos) firstPos = pos;
-    });
-    var start = Math.max(0, firstPos - 80);
-    var end = Math.min(text.length, start + maxLen);
-    var snippet = text.slice(start, end).replace(/\s+/g, ' ').trim();
-    if (start > 0) snippet = '…' + snippet;
-    if (end < text.length) snippet = snippet + '…';
-    return snippet;
-  }
-
-  function highlightKeywords(html, keywords) {
-    keywords.forEach(function(kw) {
-      if (!kw) return;
-      var escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      var re = new RegExp('(' + escaped + ')', 'gi');
-      html = html.replace(re, '<span class="highlight">$1</span>');
-    });
-    return html;
-  }
-
-  function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // 等DOM准备好后初始化（可能在template克隆后调用）
-  // 用MutationObserver监听pdfFileInput出现
-  var observer = new MutationObserver(function() {
-    if (document.getElementById('pdfFileInput')) {
-      initPdfQA();
-      observer.disconnect();
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  // 也立即尝试初始化（如果已经渲染）
-  if (document.getElementById('pdfFileInput')) initPdfQA();
-
-})();
 </script>
 
 </body>
